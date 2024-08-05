@@ -5,7 +5,7 @@
     <script>
         $(document).ready(function () {
 
-            // загрузка студентов
+            // GET ALL USERS
             getAllUsers();
 
             // нажимаем на ссылку Изменить
@@ -17,13 +17,11 @@
             // создание строки для таблицы
             let row = function (user) {
                 return "<tr data-rowid='" + user.Id + "'><td>" + user.Id + "</td>" +
-                    "<td>" + user.Name + "</td> <td>" + user.Surname + "</td>" +
-                    "<td>" + user.Age + "</td> <td>" + user.GPA + "</td>" +
-                    "<td><a href='javascript: void (0)' data-userid='" + user.Id +
+                    "<td>" + user.Name + "</td><td><a href='javascript: void (0)' data-userid='" + user.Id +
                     "' class='btn btn-success btn-get-user'>Get User</a></td></tr>";
             };
 
-            // Получение всех студентов
+            // GET ALL USERS
             function getAllUsers() {
                 $.ajax({
                     url: '@Url.Action("GetUsers", "Users")',
@@ -44,7 +42,7 @@
                     }
                 });
             }
-            // GET BY ID
+            // GET USER BY ID
             function getUser(userid) {
 
                 let url = '@Url.Action("GetDetailsById", "Users")' + '/' + userid;
@@ -55,10 +53,7 @@
                     processData: false,
                     success: function (response) {
                             var user = JSON.parse(response);
-                            $("#surname").val(user.Surname);
                             $("#name").val(user.Name);
-                            $("#age").val(user.Age);
-                            $("#gpa").val(user.GPA);
                             $("#hdn-user-id").val(user.Id);
 
                     },
@@ -69,13 +64,10 @@
             }
 
 
-            //SAVE
+            //SAVE USER
             $("#btn-insert-user").on("click", function () {
                 let formData = new FormData();
                 formData.append("name", $("#name").val());
-                formData.append("surname", $("#surname").val());
-                formData.append("age", $("#age").val());
-                formData.append("gpa", $("#gpa").val());
                 $.ajax({
                     type: 'POST',
                     url: '@Url.Action("InsertUser", "Users")',
@@ -85,7 +77,7 @@
                     success: function (response) {
                        alert(response);
                        resetForm();
-                        // загрузка студентов
+                        // загрузка пользователей
                        getAllUsers();
                     },
                     error: function (x, y, z) {
@@ -93,14 +85,12 @@
                     }
                 });
             });
-            // UPDATE
+
+            // UPDATE USER
             $("#btn-update-user").on("click", function () {
                 let formData = new FormData();
                 formData.append("id", $("#hdn-user-id").val());
                 formData.append("name", $("#name").val());
-                formData.append("surname", $("#surname").val());
-                formData.append("age", $("#age").val());
-                formData.append("gpa", $("#gpa").val());
                 $.ajax({
                     type: 'PUT',
                     url: '@Url.Action("UpdateUser", "Users")',
@@ -110,7 +100,7 @@
                     success: function (response) {
                         alert(response);
                         resetForm();
-                        // загрузка студентов
+                        // загрузка пользователей
                         getAllUsers();
                     },
                     error: function (x, y, z) {
@@ -118,9 +108,10 @@
                     }
                 });
             });
-            //DELETE
+
+            //DELETE USER
             $("#btn-delete-user").on("click", function () {
-                if(!confirm("Вы действительно желаете удалить студента?"))
+                if(!confirm("Do zou reallz whant to delete this user?"))
                     return;
                 let formData = new FormData();
                 formData.append("id", $("#hdn-user-id").val());
@@ -133,7 +124,7 @@
                     success: function (response) {
                         alert(response);
                         resetForm();
-                        // загрузка студентов
+                        // загрузка пользователей
                         getAllUsers();
                     },
                     error: function (x, y, z) {
@@ -144,9 +135,6 @@
             function resetForm() {
                 $("#hdn-user-id").val("");
                 $("#name").val("");
-                $("#surname").val("");
-                $("#age").val("");
-                $("#gpa").val("");
             }           
         });
     </script>
@@ -167,18 +155,7 @@
                     <label for="name" class="form-label">Name</label>
                     <input type="text" class="form-control" id="name" placeholder="Enter Your Name" value="" autocomplete="off" required>
                 </div>
-                <div class="col-sm-6">
-                    <label for="surname" class="form-label">Surname</label>
-                    <input type="text" class="form-control" id="surname" placeholder="Enter Your Surname" value="" autocomplete="off" required>
-                </div>
-                <div class="col-sm-6">
-                    <label for="age" class="form-label">Age</label>
-                    <input type="number" class="form-control" id="age" placeholder="Enter Your Age" value="" autocomplete="off" required>
-                </div>
-                <div class="col-sm-6">
-                    <label for="gpa" class="form-label">GPA</label>
-                    <input type="number" class="form-control" id="gpa" placeholder="Enter Your GPA" value="" autocomplete="off" required>
-                </div>
+
             </div>
             <table class="table">
                 <tbody>
@@ -207,10 +184,6 @@
                 <tr>
                     <td>#</td>
                     <td>Name</td>
-                    <td>Surname</td>
-                    <td>Age</td>
-                    <td>GPA</td>
-                    <td>Action</td>
                 </tr>
             </thead>
             <tbody id="user-list">
