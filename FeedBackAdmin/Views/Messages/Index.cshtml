@@ -25,9 +25,7 @@
                     "' class='btn btn-success btn-get-user'>Get User</a></td></tr>";
             };*/
             let row = function (message) {
-                return "<tr data-rowid='" + message.Id + "'><td>" + message.Id + "</td>" +
-                    "<td>" + message.Text + "</td> <td>" + message.Date + "</td>" +
-                    "<td>" + message.UserId + "</td> <td>" + message.UserId + "</td>" +
+                return "<tr data-rowid='" + message.Id + "'><td>" + message.Date + "</td> <td>" + message.Text + "</td>" +
                     "<td><a href='javascript: void (0)' data-userid='" + message.UserId +
                     "' class='btn btn-success btn-get-user'>Get User</a></td></tr>";
             };
@@ -193,27 +191,13 @@
                     <label for="name" class="form-label">Name</label>
                     <input type="text" class="form-control" id="name" placeholder="Enter Your Name" value="" autocomplete="off" required>
                 </div>
-                <div class="col-sm-6">
-                    <label for="surname" class="form-label">Surname</label>
-                    <input type="text" class="form-control" id="surname" placeholder="Enter Your Surname" value="" autocomplete="off" required>
-                </div>
-                <div class="col-sm-6">
-                    <label for="age" class="form-label">Age</label>
-                    <input type="number" class="form-control" id="age" placeholder="Enter Your Age" value="" autocomplete="off" required>
-                </div>
-                <div class="col-sm-6">
-                    <label for="gpa" class="form-label">GPA</label>
-                    <input type="number" class="form-control" id="gpa" placeholder="Enter Your GPA" value="" autocomplete="off" required>
-                </div>
+
             </div>
             <table class="table">
                 <tbody>
                     <tr>
                         <td>
-                            <a href="javascript:void(0)" class="btn btn-primary" id="btn-insert-user">Save User</a>
-                        </td>
-                        <td>
-                            <a href="javascript:void(0)" class="btn btn-info" id="btn-update-user">Update User</a>
+                            <a href="javascript:void(0)" class="btn btn-warning" id="btn-delete-message">Delete Message</a>
                         </td>
                         <td>
                             <a href="javascript:void(0)" class="btn btn-danger" id="btn-delete-user">Delete User</a>
@@ -232,11 +216,8 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <td>#</td>
-                    <td>Text</td>
                     <td>Date</td>
-                    <td>User</td>
-                    <td>GPA</td>
+                    <td>Text</td>
                     <td>Action</td>
                 </tr>
             </thead>
