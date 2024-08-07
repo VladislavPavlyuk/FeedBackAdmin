@@ -27,11 +27,13 @@
             let row = function (message) {
                 return "<tr data-rowid='" + message.Id + "'><td>" + message.Date + "</td> <td>" + message.Text + "</td>" +
                     "<td><a href='javascript: void (0)' data-userid='" + message.UserId +
-                    "' class='btn btn-success btn-get-user'>Get User</a></td></tr>";
+                    "' class='btn btn-success btn-get-user'>Get User</a></td>"+
+                    "<td><a href='javascript: void (0)' data-messageid='" + message.Id +
+                    "' class='btn btn-warning btn-delete-message'>Delete Message</a></td></tr>";
             };
 
-            /*/ Получение всех студентов
-            function getAllUsers() {
+            // GET ALL USERS
+            /*function getAllUsers() {
                 $.ajax({
                     url: '@Url.Action("GetUsers", "Users")',
                     type: 'GET',
@@ -51,6 +53,7 @@
                     }
                 });
             }*/
+            // GET ALL MESSAGES
             function getAllMessages() {
                 $.ajax({
                     url: '@Url.Action("GetMessages", "Messages")',
@@ -71,7 +74,7 @@
                     }
                 });
             }
-            // GET BY ID
+            // GET USER BY ID
             function getUser(userid) {
 
                 let url = '@Url.Action("GetDetailsById", "Users")' + '/' + userid;
@@ -93,7 +96,7 @@
             }
 
 
-            //SAVE
+            /*/SAVE
             $("#btn-insert-user").on("click", function () {
                 let formData = new FormData();
                 formData.append("name", $("#name").val());
@@ -116,8 +119,9 @@
                         alert(x + '\n' + y + '\n' + z);
                     }
                 });
-            });
-            // UPDATE
+            });*/
+
+            /*/ UPDATE
             $("#btn-update-user").on("click", function () {
                 let formData = new FormData();
                 formData.append("id", $("#hdn-user-id").val());
@@ -141,10 +145,35 @@
                         alert(x + '\n' + y + '\n' + z);
                     }
                 });
+            });*/
+   
+            //DELETE MESSAGE
+            $("#btn-delete-message").on("click", function () {
+                if (!confirm("Do you really want to delete this message?"))
+                    return;
+                let formData = new FormData();
+                formData.append("id", $("#hdn-message-id").val());
+                $.ajax({
+                    type: 'DELETE',
+                    url: '@Url.Action("DeleteMessage", "Messages")',
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    success: function (response) {
+                        alert(response);
+                        resetForm();
+                        // GET ALL MESSAGES
+                        getAllMassages();
+                    },
+                    error: function (x, y, z) {
+                        alert(x + '\n' + y + '\n' + z);
+                    }
+                });
             });
+
             //DELETE USER
             $("#btn-delete-user").on("click", function () {
-                if (!confirm("Вы действительно желаете удалить студента?"))
+                if (!confirm("Do you really want to delete this user?"))
                     return;
                 let formData = new FormData();
                 formData.append("id", $("#hdn-user-id").val());
@@ -157,8 +186,8 @@
                     success: function (response) {
                         alert(response);
                         resetForm();
-                        // загрузка студентов
-                        getAllUsers();
+                        // GET ALL MESSAGES
+                        getAllMassages();
                     },
                     error: function (x, y, z) {
                         alert(x + '\n' + y + '\n' + z);
@@ -168,9 +197,6 @@
             function resetForm() {
                 $("#hdn-user-id").val("");
                 $("#name").val("");
-                $("#surname").val("");
-                $("#age").val("");
-                $("#gpa").val("");
             }
         });
     </script>
@@ -185,10 +211,10 @@
 <div class="row">
     <div class="col-sm-12">
         <form>
-            <input type="hidden" id="hdn-message-id" />
+            <input type="hidden" id="hdn-user-id" />
             <div class="row g-3">
                 <div class="col-sm-6">
-                    <label for="name" class="form-label">Name</label>
+                    <label for="name" class="form-label">User</label>
                     <input type="text" class="form-control" id="name" placeholder="Enter Your Name" value="" autocomplete="off" required>
                 </div>
 
@@ -196,9 +222,6 @@
             <table class="table">
                 <tbody>
                     <tr>
-                        <td>
-                            <a href="javascript:void(0)" class="btn btn-warning" id="btn-delete-message">Delete Message</a>
-                        </td>
                         <td>
                             <a href="javascript:void(0)" class="btn btn-danger" id="btn-delete-user">Delete User</a>
                         </td>
@@ -218,7 +241,8 @@
                 <tr>
                     <td>Date</td>
                     <td>Text</td>
-                    <td>Action</td>
+                    <td>Action1</td>
+                    <td>Action2</td>
                 </tr>
             </thead>
             <tbody id="message-list">
