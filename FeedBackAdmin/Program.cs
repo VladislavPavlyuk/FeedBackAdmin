@@ -17,6 +17,6 @@ app.UseStaticFiles(); // обрабатывает запросы к файлам
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Users}/{action=Index}/{id?}");
+    pattern: "{controller=Messages}/{action=Index}/{id?}");
 
 app.Run();

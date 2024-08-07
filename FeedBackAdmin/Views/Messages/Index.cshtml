@@ -1,12 +1,14 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-@section Scripts{
+@section Scripts {
     <script>
         $(document).ready(function () {
 
-            // GET ALL USERS
-            getAllUsers();
+            // загрузка студентов
+            //getAllUsers();
+
+            getAllMessages();
 
             // нажимаем на ссылку Изменить
             $("body").on("click", ".btn-get-user", function () {
@@ -15,13 +17,22 @@
             });
 
             // создание строки для таблицы
-            let row = function (user) {
+            /*let row = function (user) {
                 return "<tr data-rowid='" + user.Id + "'><td>" + user.Id + "</td>" +
-                    "<td>" + user.Name + "</td><td><a href='javascript: void (0)' data-userid='" + user.Id +
+                    "<td>" + user.Name + "</td> <td>" + user.Surname + "</td>" +
+                    "<td>" + user.Age + "</td> <td>" + user.GPA + "</td>" +
+                    "<td><a href='javascript: void (0)' data-userid='" + user.Id +
+                    "' class='btn btn-success btn-get-user'>Get User</a></td></tr>";
+            };*/
+            let row = function (message) {
+                return "<tr data-rowid='" + message.Id + "'><td>" + message.Id + "</td>" +
+                    "<td>" + message.Text + "</td> <td>" + message.Date + "</td>" +
+                    "<td>" + message.UserId + "</td> <td>" + message.UserId + "</td>" +
+                    "<td><a href='javascript: void (0)' data-userid='" + message.UserId +
                     "' class='btn btn-success btn-get-user'>Get User</a></td></tr>";
             };
 
-            // GET ALL USERS
+            /*/ Получение всех студентов
             function getAllUsers() {
                 $.ajax({
                     url: '@Url.Action("GetUsers", "Users")',
@@ -35,14 +46,34 @@
                             // добавляем полученные элементы в таблицу
                             rows += row(user);
                         })
-                        $("#user-list").html(rows); 
+                        $("#user-list").html(rows);
+                    },
+                    error: function (x, y, z) {
+                        alert(x + '\n' + y + '\n' + z);
+                    }
+                });
+            }*/
+            function getAllMessages() {
+                $.ajax({
+                    url: '@Url.Action("GetMessages", "Messages")',
+                    type: 'GET',
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        let rows = "";
+                        let messages = JSON.parse(response);
+                        $.each(messages, function (index, message) {
+                            // добавляем полученные элементы в таблицу
+                            rows += row(message);
+                        })
+                        $("#message-list").html(rows);
                     },
                     error: function (x, y, z) {
                         alert(x + '\n' + y + '\n' + z);
                     }
                 });
             }
-            // GET USER BY ID
+            // GET BY ID
             function getUser(userid) {
 
                 let url = '@Url.Action("GetDetailsById", "Users")' + '/' + userid;
@@ -52,9 +83,9 @@
                     contentType: false,
                     processData: false,
                     success: function (response) {
-                            var user = JSON.parse(response);
-                            $("#name").val(user.Name);
-                            $("#hdn-user-id").val(user.Id);
+                        var user = JSON.parse(response);
+                        $("#name").val(user.Name);
+                        $("#hdn-user-id").val(user.Id);
 
                     },
                     error: function (x, y, z) {
@@ -64,10 +95,13 @@
             }
 
 
-            //SAVE USER
+            //SAVE
             $("#btn-insert-user").on("click", function () {
                 let formData = new FormData();
                 formData.append("name", $("#name").val());
+                formData.append("surname", $("#surname").val());
+                formData.append("age", $("#age").val());
+                formData.append("gpa", $("#gpa").val());
                 $.ajax({
                     type: 'POST',
                     url: '@Url.Action("InsertUser", "Users")',
@@ -75,22 +109,24 @@
                     processData: false,
                     data: formData,
                     success: function (response) {
-                       alert(response);
-                       resetForm();
-                        // загрузка пользователей
-                       getAllUsers();
+                        alert(response);
+                        resetForm();
+                        // загрузка студентов
+                        getAllUsers();
                     },
                     error: function (x, y, z) {
                         alert(x + '\n' + y + '\n' + z);
                     }
                 });
             });
-
-            // UPDATE USER
+            // UPDATE
             $("#btn-update-user").on("click", function () {
                 let formData = new FormData();
                 formData.append("id", $("#hdn-user-id").val());
                 formData.append("name", $("#name").val());
+                formData.append("surname", $("#surname").val());
+                formData.append("age", $("#age").val());
+                formData.append("gpa", $("#gpa").val());
                 $.ajax({
                     type: 'PUT',
                     url: '@Url.Action("UpdateUser", "Users")',
@@ -100,7 +136,7 @@
                     success: function (response) {
                         alert(response);
                         resetForm();
-                        // загрузка пользователей
+                        // загрузка студентов
                         getAllUsers();
                     },
                     error: function (x, y, z) {
@@ -108,10 +144,9 @@
                     }
                 });
             });
-
             //DELETE USER
             $("#btn-delete-user").on("click", function () {
-                if(!confirm("Do zou reallz whant to delete this user?"))
+                if (!confirm("Вы действительно желаете удалить студента?"))
                     return;
                 let formData = new FormData();
                 formData.append("id", $("#hdn-user-id").val());
@@ -124,7 +159,7 @@
                     success: function (response) {
                         alert(response);
                         resetForm();
-                        // загрузка пользователей
+                        // загрузка студентов
                         getAllUsers();
                     },
                     error: function (x, y, z) {
@@ -135,7 +170,10 @@
             function resetForm() {
                 $("#hdn-user-id").val("");
                 $("#name").val("");
-            }           
+                $("#surname").val("");
+                $("#age").val("");
+                $("#gpa").val("");
+            }
         });
     </script>
     @{
@@ -143,25 +181,37 @@
     }
 }
 <div class="text-center">
-    <h3 class="display-4">Feedbacks Admin Panel</h3>
+    <h1 class="display-4">Welcome To ASP.NET Core AJAX Demo</h1>
     <hr />
 </div>
 <div class="row">
     <div class="col-sm-12">
         <form>
-            <input type="hidden" id="hdn-user-id" />
+            <input type="hidden" id="hdn-message-id" />
             <div class="row g-3">
                 <div class="col-sm-6">
                     <label for="name" class="form-label">Name</label>
                     <input type="text" class="form-control" id="name" placeholder="Enter Your Name" value="" autocomplete="off" required>
                 </div>
-
+                <div class="col-sm-6">
+                    <label for="surname" class="form-label">Surname</label>
+                    <input type="text" class="form-control" id="surname" placeholder="Enter Your Surname" value="" autocomplete="off" required>
+                </div>
+                <div class="col-sm-6">
+                    <label for="age" class="form-label">Age</label>
+                    <input type="number" class="form-control" id="age" placeholder="Enter Your Age" value="" autocomplete="off" required>
+                </div>
+                <div class="col-sm-6">
+                    <label for="gpa" class="form-label">GPA</label>
+                    <input type="number" class="form-control" id="gpa" placeholder="Enter Your GPA" value="" autocomplete="off" required>
+                </div>
             </div>
             <table class="table">
                 <tbody>
                     <tr>
-                        <td>  
-                            <a href="javascript:void(0)" class="btn btn-primary" id="btn-insert-user">Save User</a></td>
+                        <td>
+                            <a href="javascript:void(0)" class="btn btn-primary" id="btn-insert-user">Save User</a>
+                        </td>
                         <td>
                             <a href="javascript:void(0)" class="btn btn-info" id="btn-update-user">Update User</a>
                         </td>
@@ -183,11 +233,14 @@
             <thead>
                 <tr>
                     <td>#</td>
-                    <td>Name</td>
+                    <td>Text</td>
+                    <td>Date</td>
+                    <td>User</td>
+                    <td>GPA</td>
+                    <td>Action</td>
                 </tr>
             </thead>
-            <tbody id="user-list">
-
+            <tbody id="message-list">
             </tbody>
         </table>
     </div>
